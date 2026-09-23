@@ -5,7 +5,6 @@ import os
 import sys
 from datetime import datetime, timezone
 
-# Додаємо шлях до кореневої папки для імпорту shared
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 from shared.student import GROUP_NAME, STUDENT_NAME, VARIANT_NUMBER
 
@@ -32,7 +31,6 @@ def log_event(func):
         log_path = os.path.join(log_dir, "log.json")
 
         try:
-            # Читаємо існуючі логі або створюємо новий список
             logs = []
             if os.path.exists(log_path):
                 with open(log_path, "r", encoding="utf-8") as f:
@@ -59,11 +57,9 @@ def generate_hash(password: str, salt: str = "00002") -> str:
     if password is None or salt is None or password == "" or salt == "":
         raise ValueError("Пароль та сіль не можуть бути порожніми.")
 
-    # Мінімальна довжина для Варіанта 2 становить 10 символів
     if len(password) < 10:
         raise ValidationError("Пароль занадто короткий (менше 10 символів).")
 
-    # Конкатенація пароля та солі
     raw_data = (password + salt).encode("utf-8")
     hash_obj = hashlib.sha3_224(raw_data)
     return hash_obj.hexdigest()
@@ -134,7 +130,6 @@ def main():
     print("=" * 60)
 
     try:
-        # 1. Кортеж із 10 користувачів (логін, пароль)
         users_to_register = (
             ("admin_sys", "CompL3x@Pass1"),
             ("analyst_23", "Strong#2023_a"),
@@ -148,11 +143,9 @@ def main():
             ("user_test6", "ElitePass@10"),
         )
 
-        # 2. Створення CSV-бази
         print("Створення бази даних користувачів...")
         create_users(users_to_register)
 
-        # 3. Читання бази даних та виведення у вигляді таблиці
         db_content = read_users_db()
         print(f"\n{'Логін користувача':<20} | {'Хеш пароля (SHA3-224 + сіль)':<40}")
         print("-" * 65)
@@ -162,11 +155,9 @@ def main():
         print("\n" + "=" * 60)
         print("ТЕСТУВАННЯ АВТЕНТИФІКАЦІЇ ТА ЛОГУВАННЯ:")
 
-        # 4. Тест успішного входу
         res1 = login("dev_alex", "Advanced@1_dev")
         print(f"Вхід ('dev_alex'): {'Успішно' if res1 else 'Помилка'}")
 
-        # 5. Тест невдалих спроб (невірний пароль / короткий пароль / порожні дані)
         res2 = login("dev_alex", "wrong_pass")
         print(
             f"Вхід ('dev_alex' з невірним паролем): {'Успішно' if res2 else 'Помилка (очікувано)'}"
