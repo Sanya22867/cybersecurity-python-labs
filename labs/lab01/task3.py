@@ -164,12 +164,12 @@ def main():
         )
 
         try:
-            login("dev_alex", "short")  # Викличе ValidationError
+            login("dev_alex", "short")
         except ValidationError as e:
             print(f"Перехоплено виняток валідації: {e}")
 
         try:
-            login("", "")  # Викличе ValueError
+            login("", "")
         except ValueError as e:
             print(f"Перехоплено виняток значень: {e}")
 

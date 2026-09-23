@@ -5,6 +5,7 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 from shared.student import GROUP_NAME, STUDENT_NAME, VARIANT_NUMBER
 
+
 def evaluate_passwords(passwords_list, criteria_dict, forbidden_set):
     """Оцінює список паролів за заданими критеріями."""
     results = []
