@@ -16,7 +16,6 @@ def evaluate_passwords(passwords_list, criteria_dict, forbidden_set):
         pwd_counts[p] = pwd_counts.get(p, 0) + 1
 
     for pwd in passwords_list:
-
         is_forbidden = (
             pwd.lower() in [f.lower() for f in forbidden_set] or len(pwd) < min_len
         )
@@ -86,6 +85,7 @@ def main():
     print("-" * 40)
     for pwd, status in evaluated_passwords:
         print(f"{pwd:<20} | {status:<15}")
+
 
 if __name__ == "__main__":
     main()

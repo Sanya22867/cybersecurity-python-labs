@@ -13,6 +13,13 @@ class ValidationError(Exception):
     """Власний виняток для валідації паролів."""
 
 
+def check_min_length(password: str):
+    """Перевірка мінімальної довжини пароля."""
+    if len(password) < 10:
+        raise ValidationError("Пароль занадто короткий (менше 10 символів).")
+    """Власний виняток для валідації паролів."""
+
+
 def log_event(func):
     """Декоратор для логування спроб автентифікації у JSON-файл."""
 
@@ -22,7 +29,8 @@ def log_event(func):
             "event": "login",
             "user": username,
             "result": "success" if result else "failure",
-            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),            "args": list(args),
+            "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+            "args": list(args),
             "kwargs": kwargs,
         }
 
@@ -44,7 +52,10 @@ def log_event(func):
             with open(log_path, "w", encoding="utf-8") as f:
                 json.dump(logs, f, indent=4, ensure_ascii=False)
 
-        except (OSError, PermissionError) as e:
+        except (
+            PermissionError,
+            OSError,
+        ) as e:
             print(f"[Помилка логування]: {e}")
 
         return result
@@ -84,9 +95,9 @@ def create_users(users_list: list):
                 user_tuple = create_user(uname, pwd)
                 writer.writerow(user_tuple)
     except (
-        OSError,
         FileNotFoundError,
         PermissionError,
+        OSError,
         ValidationError,
         ValueError,
     ) as e:
@@ -103,7 +114,11 @@ def read_users_db() -> list:
             for row in reader:
                 if row:
                     users_db.append(row)
-    except (OSError, FileNotFoundError, PermissionError) as e:
+    except (
+        FileNotFoundError,
+        PermissionError,
+        OSError,
+    ) as e:
         print(f"[Помилка читання бази]: {e}")
     return users_db
 
@@ -176,9 +191,6 @@ def main():
         print("\nЛоги подій успішно записані у файл labs/lab01/data/log.json")
 
     except (
-        OSError,
-        FileNotFoundError,
-        PermissionError,
         ValidationError,
         ValueError,
     ) as err:

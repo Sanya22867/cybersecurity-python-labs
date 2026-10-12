@@ -5,6 +5,39 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"
 from shared.student import GROUP_NAME, STUDENT_NAME, VARIANT_NUMBER
 
 
+def print_resources(resources, security_levels):
+    """Виводить список ресурсів."""
+    print("СПИСОК РЕСУРСІВ:")
+    for res_name, res_level in resources:
+        text_level = security_levels[res_level - 1]
+        print(f"- {res_name}: {text_level}")
+
+
+def check_access(username, res_name, res_level, users, blocked_users):
+    """Перевіряє доступ для конкретного користувача та ресурсу."""
+    if username not in users:
+        print(f"user={username:<15} resource={res_name:<18} -> DENY (User not found)")
+        return
+
+    if username in blocked_users:
+        print(f"user={username:<15} resource={res_name:<18} -> DENY (User is blocked)")
+        return
+
+    user_data = users[username]
+
+    if not user_data.get("active", False):
+        print(f"user={username:<15} resource={res_name:<18} -> DENY (Account inactive)")
+        return
+
+    user_clearance = user_data.get("clearance", 0)
+    if user_clearance >= res_level:
+        print(f"user={username:<15} resource={res_name:<18} -> ALLOW")
+    else:
+        print(
+            f"user={username:<15} resource={res_name:<18} -> DENY (Insufficient clearance)"
+        )
+
+
 def main():
     """Завдання 2"""
     print(f"Студент: {STUDENT_NAME} | Група: {GROUP_NAME} | Варіант: {VARIANT_NUMBER}")
@@ -59,10 +92,7 @@ def main():
     security_levels = ("Open", "Internal", "Restricted", "Top Secret")
     blocked_users = {"external123", "old_account", "test_user"}
 
-    print("СПИСОК РЕСУРСІВ:")
-    for res_name, res_level in resources:
-        text_level = security_levels[res_level - 1]
-        print(f"- {res_name}: {text_level}")
+    print_resources(resources, security_levels)
 
     print("\n" + "=" * 60 + "\n")
     print("РЕЗУЛЬТАТИ ПЕРЕВІРКИ ДОСТУПУ:")
@@ -71,34 +101,7 @@ def main():
 
     for username in users_to_test:
         for res_name, res_level in resources:
-            if username not in users:
-                print(
-                    f"user={username:<15} resource={res_name:<18} -> DENY (User not found)"
-                )
-                continue
-
-            if username in blocked_users:
-                print(
-                    f"user={username:<15} resource={res_name:<18} -> DENY (User is blocked)"
-                )
-                continue
-
-            user_data = users[username]
-
-            if not user_data.get("active", False):
-                print(
-                    f"user={username:<15} resource={res_name:<18} -> DENY (Account inactive)"
-                )
-                continue
-
-            user_clearance = user_data.get("clearance", 0)
-            if user_clearance >= res_level:
-                print(f"user={username:<15} resource={res_name:<18} -> ALLOW")
-            else:
-                print(
-                    f"user={username:<15} resource={res_name:<18} -> DENY (Insufficient clearance)"
-                )
-
+            check_access(username, res_name, res_level, users, blocked_users)
         print("-" * 60)
 
 
